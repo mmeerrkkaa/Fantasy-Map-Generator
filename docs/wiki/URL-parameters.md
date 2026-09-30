@@ -11,6 +11,8 @@ Here is a list of parameters you can add to URL in order to set generator option
 * `burgs` - number of settlements, from 1 to 1000
 * `provinces` - province ratio, from 0 to 100
 * `religions` - number of religions, from 0 to 30
+* `growth` - how far countries spread into empty land. The on-screen slider stops at 2, which leaves most of the map neutral. Values up to 50 are accepted. `20` fills the land
+* `variety` - how uneven the countries are, from 0 to 10. `0` keeps them about the same size
 * These counts are applied on the first generation even when the browser has other options saved. Omit `seed` to get a new world every visit. Example: `https://mmeerrkkaa.github.io/Fantasy-Map-Generator/?width=480&height=270&options=default&points=1000&states=2&cultures=1&burgs=4&provinces=0&layers=states,borders,labels`
 * `scale` - map zoom level, where `0.5` is 50% zoom, `1` is 100%, `2` is 200% and so on
 * `x`, `y` - point coordinates that should be focused. Obviously works only if `scale` is greater than 1. Try [`http://azgaar.github.io/Fantasy-Map-Generator/?seed=123456789&width=1536&height=722&options=default&scale=8&x=768&y=361`](http://azgaar.github.io/Fantasy-Map-Generator/?seed=123456789&width=1536&height=722&options=default&scale=8&x=768&y=361)

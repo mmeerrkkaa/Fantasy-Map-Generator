@@ -58,6 +58,10 @@ export type GenerationConfig = {
   /** province ratio, 0-100 */
   provinces?: number;
   religions?: number;
+  /** how far states spread; the slider stops at 2, higher values claim neutral land */
+  growth?: number;
+  /** 0 makes the states about the same size */
+  variety?: number;
 };
 
 /** Generate a whole new world */
@@ -133,7 +137,7 @@ export const regenerateMap = debounce(async (config?: GenerationConfig | string)
 /** Keep counts passed in the URL. `randomize` rolls them first when pins are ignored. */
 function applyRequestedCounts(config?: GenerationConfig): void {
   if (!config) return;
-  const { points, states, cultures, burgs, provinces, religions } = config;
+  const { points, states, cultures, burgs, provinces, religions, growth, variety } = config;
   if (points !== undefined) {
     options.map.graph.points = points;
     const step = Object.entries(POINTS_BY_DENSITY).find(([, count]) => count === points);
@@ -147,6 +151,8 @@ function applyRequestedCounts(config?: GenerationConfig): void {
   if (burgs !== undefined) options.generation.burgs.limit = burgs;
   if (provinces !== undefined) options.generation.provinces.ratio = provinces;
   if (religions !== undefined) options.generation.religions.limit = religions;
+  if (growth !== undefined) options.generation.states.growthRate = options.generation.cultures.growthRate = growth;
+  if (variety !== undefined) options.generation.states.sizeVariety = options.generation.cultures.sizeVariety = variety;
 }
 
 /** Ask before throwing away a map the user has been working on for a while */

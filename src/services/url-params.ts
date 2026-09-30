@@ -58,24 +58,27 @@ export async function checkLoadParameters(): Promise<void> {
   generateMapOnLoad(config);
 }
 
-const clampInt = (params: URLSearchParams, name: string, min: number, max: number): number | undefined => {
+const clampNumber = (params: URLSearchParams, name: string, min: number, max: number, round: boolean): number | undefined => {
   const raw = params.get(name);
   if (raw === null || raw === "") return undefined;
   const value = Number(raw);
   if (!Number.isFinite(value)) return undefined;
-  return Math.min(max, Math.max(min, Math.round(value)));
+  const clamped = Math.min(max, Math.max(min, value));
+  return round ? Math.round(clamped) : clamped;
 };
 
 /** Canvas size plus the counts a link may pin: cells, states, cultures, burgs, provinces, religions */
 function generationFromUrl(params: URLSearchParams): GenerationConfig {
   return {
     ...getRequestedMapSize(params),
-    points: clampInt(params, "points", 1000, 100000),
-    states: clampInt(params, "states", 1, 30),
-    cultures: clampInt(params, "cultures", 1, 30),
-    burgs: clampInt(params, "burgs", 1, 1000),
-    provinces: clampInt(params, "provinces", 0, 100),
-    religions: clampInt(params, "religions", 0, 30)
+    points: clampNumber(params, "points", 1000, 100000, true),
+    states: clampNumber(params, "states", 1, 30, true),
+    cultures: clampNumber(params, "cultures", 1, 30, true),
+    burgs: clampNumber(params, "burgs", 1, 1000, true),
+    provinces: clampNumber(params, "provinces", 0, 100, true),
+    religions: clampNumber(params, "religions", 0, 30, true),
+    growth: clampNumber(params, "growth", 0.1, 50, false),
+    variety: clampNumber(params, "variety", 0, 10, false)
   };
 }
 
@@ -86,7 +89,9 @@ function hasGenerationPreset(config: GenerationConfig): boolean {
     config.cultures !== undefined ||
     config.burgs !== undefined ||
     config.provinces !== undefined ||
-    config.religions !== undefined
+    config.religions !== undefined ||
+    config.growth !== undefined ||
+    config.variety !== undefined
   );
 }
 
