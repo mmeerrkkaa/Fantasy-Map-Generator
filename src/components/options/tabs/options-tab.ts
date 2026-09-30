@@ -89,6 +89,12 @@ const OPTION_BINDINGS: Record<string, OptionBinding> = {
     pin: "culturesSet",
     effect: syncCultures
   }),
+  namesLanguage: option({
+    read: o => o.generation.names.language,
+    write: (o, value) => (o.generation.names.language = value === "ru" ? "ru" : "en"),
+    parse: String,
+    pin: "namesLanguage"
+  }),
   statesNumber: option({
     read: o => o.generation.states.limit,
     write: (o, value) => (o.generation.states.limit = value),
@@ -291,6 +297,19 @@ const TEMPLATE = /* html */ `
           <option value="highFantasy" data-max="17">High Fantasy</option>
           <option value="darkFantasy" data-max="18">Dark Fantasy</option>
           <option value="random" data-max="100">Random</option>
+        </select>
+      </td>
+      <td></td>
+    </tr>
+    <tr data-tip="Language of generated state and settlement names. Russian uses the Russian name base">
+      <td>
+        <i data-locked="0" id="lock_namesLanguage" class="icon-lock-open"></i>
+      </td>
+      <td>Names language</td>
+      <td>
+        <select id="namesLanguage" data-option="namesLanguage">
+          <option value="en" selected>English</option>
+          <option value="ru">Russian</option>
         </select>
       </td>
       <td></td>

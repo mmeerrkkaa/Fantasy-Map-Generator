@@ -76,6 +76,7 @@ class OptionsModel {
         resolveDepressionsSteps: 250,
         lakeElevationLimit: 20,
         cultures: { limit: 12, set: "world", sizeVariety: 4, growthRate: 1 },
+        names: { language: "en" },
         states: { limit: 18, sizeVariety: 4, growthRate: 1 },
         provinces: { ratio: 20 },
         religions: { limit: 6 },

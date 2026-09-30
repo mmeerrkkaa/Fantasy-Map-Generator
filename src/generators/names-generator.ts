@@ -219,6 +219,12 @@ class NamesGenerator {
     // no suffix for fantasy bases
     if (base > 32 && base < 42) return name;
 
+    if (this.nameBases[base]?.name === "Russian") {
+      const roll = Math.random();
+      const suffix = roll < 0.4 ? "ия" : roll < 0.7 ? "ск" : roll < 0.85 ? "град" : "ье";
+      return this.validateSuffix(name, suffix);
+    }
+
     // define if suffix should be used
     if (name.length > 3 && isVowel(name.slice(-1))) {
       if (isVowel(name.slice(-2, -1)) && P(0.85)) name = name.slice(0, -2);

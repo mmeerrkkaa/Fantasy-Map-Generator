@@ -80,8 +80,15 @@ function generationFromUrl(params: URLSearchParams): GenerationConfig {
     religions: clampNumber(params, "religions", 0, 30, true),
     growth: clampNumber(params, "growth", 0.1, 500, false),
     variety: clampNumber(params, "variety", 0, 10, false),
-    template: templateFromUrl(params)
+    template: templateFromUrl(params),
+    names: namesFromUrl(params)
   };
+}
+
+function namesFromUrl(params: URLSearchParams): "en" | "ru" | undefined {
+  const raw = params.get("names")?.trim().toLowerCase();
+  if (raw === "ru" || raw === "en") return raw;
+  return undefined;
 }
 
 function templateFromUrl(params: URLSearchParams): string | undefined {
@@ -102,7 +109,8 @@ function hasGenerationPreset(config: GenerationConfig): boolean {
     config.religions !== undefined ||
     config.growth !== undefined ||
     config.variety !== undefined ||
-    config.template !== undefined
+    config.template !== undefined ||
+    config.names !== undefined
   );
 }
 

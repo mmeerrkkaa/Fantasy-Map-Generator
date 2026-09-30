@@ -1110,6 +1110,16 @@ class CulturesGenerator {
     };
 
     const cultures = selectCultures(count);
+    if (options.generation.names.language === "ru") {
+      const russian = Names.nameBases.findIndex(base => base.name === "Russian");
+      if (russian >= 0) {
+        for (const culture of cultures) {
+          if (culture.lock) continue;
+          culture.base = russian;
+          culture.name = Names.getBase(russian);
+        }
+      }
+    }
     pack.cultures = cultures;
     const centers = quadtree<number>();
     const colors = getColors(count);
