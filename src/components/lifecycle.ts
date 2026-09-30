@@ -13,7 +13,7 @@ import { applyDefaultViewboxEvents } from "@/components/viewbox-events";
 import { setViewportSize } from "@/components/viewport";
 import { invokeActiveZooming, resetZoom } from "@/components/zoom";
 import { Controllers } from "@/controllers";
-import { getPointsNumber } from "@/data/graph-density";
+import { getPointsNumber, POINTS_BY_DENSITY } from "@/data/graph-density";
 import { GenerationPipeline } from "@/generators/generation-pipeline";
 import { initiateAutosave } from "@/services/autosave";
 import { stashCallbackToken } from "@/services/help/auth";
@@ -45,7 +45,20 @@ export async function boot(): Promise<void> {
   initiateAutosave();
 }
 
-export type GenerationConfig = { seed?: string; graph?: GridGraph; width?: number; height?: number; points?: number };
+export type GenerationConfig = {
+  seed?: string;
+  graph?: GridGraph;
+  width?: number;
+  height?: number;
+  /** cell count, clamped by the caller; 1000 is the smallest official slider step */
+  points?: number;
+  states?: number;
+  cultures?: number;
+  burgs?: number;
+  /** province ratio, 0-100 */
+  provinces?: number;
+  religions?: number;
+};
 
 /** Generate a whole new world */
 export async function generate(config?: GenerationConfig): Promise<void> {
@@ -54,6 +67,7 @@ export async function generate(config?: GenerationConfig): Promise<void> {
     Options.setGraphSize(width, height);
     setSeed(precreatedSeed);
     Options.randomize();
+    applyRequestedCounts(config);
     if (precreatedGraph && points !== undefined) options.map.graph.points = points;
     applyGraphSize(); // TODO: DOM change, not part of generation
 
@@ -115,6 +129,25 @@ export const regenerateMap = debounce(async (config?: GenerationConfig | string)
   shouldShowLoading && hideLoading();
   clearMainTip();
 }, 250);
+
+/** Keep counts passed in the URL. `randomize` rolls them first when pins are ignored. */
+function applyRequestedCounts(config?: GenerationConfig): void {
+  if (!config) return;
+  const { points, states, cultures, burgs, provinces, religions } = config;
+  if (points !== undefined) {
+    options.map.graph.points = points;
+    const step = Object.entries(POINTS_BY_DENSITY).find(([, count]) => count === points);
+    if (step) options.generation.graph.density = Number(step[0]);
+  }
+  if (states !== undefined) options.generation.states.limit = states;
+  if (cultures !== undefined) {
+    options.generation.cultures.limit = cultures;
+    Options.capCultures();
+  }
+  if (burgs !== undefined) options.generation.burgs.limit = burgs;
+  if (provinces !== undefined) options.generation.provinces.ratio = provinces;
+  if (religions !== undefined) options.generation.religions.limit = religions;
+}
 
 /** Ask before throwing away a map the user has been working on for a while */
 export function regeneratePrompt(config?: GenerationConfig): void {

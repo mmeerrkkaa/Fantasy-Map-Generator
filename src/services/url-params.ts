@@ -22,7 +22,7 @@ export async function checkLoadParameters(): Promise<void> {
   const params = searchParams();
 
   // a linked map is generated at the size the link asks for, whatever the window measures
-  const size = getRequestedMapSize(params);
+  const config = generationFromUrl(params);
 
   const maplink = params.get("maplink");
   if (maplink) {
@@ -34,10 +34,10 @@ export async function checkLoadParameters(): Promise<void> {
     Services.Load.showUploadErrorMessage("Map link is not a valid URL", maplink);
   }
 
-  // a seed provided by the user or by MFCG: generate the map it describes
-  if (params.get("seed")) {
-    WARN && console.warn("Generate map for seed", params.get("seed"));
-    await generateMapOnLoad(size);
+  // a seed or an explicit generation preset: do not restore the last saved map
+  if (params.get("seed") || hasGenerationPreset(config)) {
+    WARN && console.warn("Generate map from URL", params.toString());
+    await generateMapOnLoad(config);
     return;
   }
 
@@ -55,7 +55,39 @@ export async function checkLoadParameters(): Promise<void> {
   }
 
   WARN && console.warn("Generate random map");
-  generateMapOnLoad(size);
+  generateMapOnLoad(config);
+}
+
+const clampInt = (params: URLSearchParams, name: string, min: number, max: number): number | undefined => {
+  const raw = params.get(name);
+  if (raw === null || raw === "") return undefined;
+  const value = Number(raw);
+  if (!Number.isFinite(value)) return undefined;
+  return Math.min(max, Math.max(min, Math.round(value)));
+};
+
+/** Canvas size plus the counts a link may pin: cells, states, cultures, burgs, provinces, religions */
+function generationFromUrl(params: URLSearchParams): GenerationConfig {
+  return {
+    ...getRequestedMapSize(params),
+    points: clampInt(params, "points", 1000, 100000),
+    states: clampInt(params, "states", 1, 30),
+    cultures: clampInt(params, "cultures", 1, 30),
+    burgs: clampInt(params, "burgs", 1, 1000),
+    provinces: clampInt(params, "provinces", 0, 100),
+    religions: clampInt(params, "religions", 0, 30)
+  };
+}
+
+function hasGenerationPreset(config: GenerationConfig): boolean {
+  return (
+    config.points !== undefined ||
+    config.states !== undefined ||
+    config.cultures !== undefined ||
+    config.burgs !== undefined ||
+    config.provinces !== undefined ||
+    config.religions !== undefined
+  );
 }
 
 /** The start-up path: style, world, layers, then wherever the URL says to look */
