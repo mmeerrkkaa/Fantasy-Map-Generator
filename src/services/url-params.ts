@@ -78,7 +78,7 @@ function generationFromUrl(params: URLSearchParams): GenerationConfig {
     burgs: clampNumber(params, "burgs", 1, 1000, true),
     provinces: clampNumber(params, "provinces", 0, 100, true),
     religions: clampNumber(params, "religions", 0, 30, true),
-    growth: clampNumber(params, "growth", 0.1, 50, false),
+    growth: clampNumber(params, "growth", 0.1, 500, false),
     variety: clampNumber(params, "variety", 0, 10, false),
     template: templateFromUrl(params)
   };
