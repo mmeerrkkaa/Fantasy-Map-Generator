@@ -62,6 +62,8 @@ export type GenerationConfig = {
   growth?: number;
   /** 0 makes the states about the same size */
   variety?: number;
+  /** heightmap template id, for example `pangea` */
+  template?: string;
 };
 
 /** Generate a whole new world */
@@ -137,7 +139,7 @@ export const regenerateMap = debounce(async (config?: GenerationConfig | string)
 /** Keep counts passed in the URL. `randomize` rolls them first when pins are ignored. */
 function applyRequestedCounts(config?: GenerationConfig): void {
   if (!config) return;
-  const { points, states, cultures, burgs, provinces, religions, growth, variety } = config;
+  const { points, states, cultures, burgs, provinces, religions, growth, variety, template } = config;
   if (points !== undefined) {
     options.map.graph.points = points;
     const step = Object.entries(POINTS_BY_DENSITY).find(([, count]) => count === points);
@@ -153,6 +155,7 @@ function applyRequestedCounts(config?: GenerationConfig): void {
   if (religions !== undefined) options.generation.religions.limit = religions;
   if (growth !== undefined) options.generation.states.growthRate = options.generation.cultures.growthRate = growth;
   if (variety !== undefined) options.generation.states.sizeVariety = options.generation.cultures.sizeVariety = variety;
+  if (template !== undefined) options.generation.template = template;
 }
 
 /** Ask before throwing away a map the user has been working on for a while */

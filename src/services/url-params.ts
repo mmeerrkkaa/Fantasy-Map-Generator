@@ -10,6 +10,7 @@ import { zoomTo } from "@/components/zoom";
 import type { Burg } from "@/generators/burgs-generator";
 import { Services } from "@/services";
 import { toggleAssistant } from "@/services/assistant";
+import { heightmapTemplates } from "@/data/heightmap-templates";
 import { getRequestedMapSize } from "@/services/map-size";
 import { ensureEl } from "@/utils/nodeUtils";
 
@@ -78,8 +79,17 @@ function generationFromUrl(params: URLSearchParams): GenerationConfig {
     provinces: clampNumber(params, "provinces", 0, 100, true),
     religions: clampNumber(params, "religions", 0, 30, true),
     growth: clampNumber(params, "growth", 0.1, 50, false),
-    variety: clampNumber(params, "variety", 0, 10, false)
+    variety: clampNumber(params, "variety", 0, 10, false),
+    template: templateFromUrl(params)
   };
+}
+
+function templateFromUrl(params: URLSearchParams): string | undefined {
+  const raw = params.get("template")?.trim().toLowerCase();
+  if (!raw) return undefined;
+  return Object.keys(heightmapTemplates).find(
+    id => id.toLowerCase() === raw || heightmapTemplates[id].name.toLowerCase() === raw
+  );
 }
 
 function hasGenerationPreset(config: GenerationConfig): boolean {
@@ -91,7 +101,8 @@ function hasGenerationPreset(config: GenerationConfig): boolean {
     config.provinces !== undefined ||
     config.religions !== undefined ||
     config.growth !== undefined ||
-    config.variety !== undefined
+    config.variety !== undefined ||
+    config.template !== undefined
   );
 }
 

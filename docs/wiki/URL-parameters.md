@@ -5,7 +5,8 @@ Here is a list of parameters you can add to URL in order to set generator option
 * `seed` - generate a map from the supplied seed. The seed is applied only on the very first generation of the session. The result also depends on the generation options and the map size, so add `options=default` and `width`/`height` to make it reproducible. Even then a different generator version will produce a different map, so to share exactly the same map send a `.map` file (e.g. via `maplink`)
 * `options` - set to `default` to allow generator to ignore options set by user. It's required for sharing the same map, see above
 * `width`, `height` - map canvas size in pixels
-* `points` - cell count. The official slider starts at 1000. Example: `points=1000`
+* `template` - heightmap type. Ids: `volcano`, `highIsland`, `lowIsland`, `continents`, `archipelago`, `atoll`, `mediterranean`, `peninsula`, `pangea`, `isthmus`, `shattered`, `taklamakan`, `oldWorld`, `fractious`. A display name such as `Pangea` also works
+* `points` - cell count. The official slider starts at 1000. Any value in between the steps is accepted, for example `points=3000`
 * `states` - number of countries, from 1 to 30. Example: `states=2`
 * `cultures` - number of cultures, from 1 to 30
 * `burgs` - number of settlements, from 1 to 1000
